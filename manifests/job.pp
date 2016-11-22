@@ -68,8 +68,13 @@ define upstart::job (
 
   $config_path = "${upstart::init_dir}/${name}.conf"
 
+  if ($ensure == 'present') {
+    $file_ensure = 'file'
+  } else {
+    $file_ensure = 'absent'
+  }
   file { $config_path:
-    ensure  => $ensure,
+    ensure  => $file_ensure,
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
