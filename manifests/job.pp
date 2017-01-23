@@ -34,6 +34,7 @@ define upstart::job (
   $script              = undef,
   $exec                = undef,
   $restart             = undef,
+  $refresh             = true,
   $task                = false,
   $run_type_service    = true,
 ) {
@@ -91,11 +92,16 @@ define upstart::job (
       # but this works well enough for now.
       if $ensure == 'present' {
         service { $name:
-          ensure    => $service_ensure,
-          enable    => $service_enable,
-          provider  => 'upstart',
-          require   => File[$config_path],
-          subscribe => File[$config_path],
+          ensure   => $service_ensure,
+          enable   => $service_enable,
+          provider => 'upstart',
+          require  => File[$config_path],
+        }
+
+        if $refresh {
+          Service[$name] {
+            subscribe => File[$config_path],
+          }
         }
 
         if !empty($restart) {
